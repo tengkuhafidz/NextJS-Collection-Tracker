@@ -1,4 +1,4 @@
-describe('login', () => {
+describe('Login', () => {
 	it('should disable button given empty password', () => {
 		// WHEN user visits /login
 		cy.visit('/login')
