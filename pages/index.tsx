@@ -21,7 +21,7 @@ export default function Home() {
 		if (!beneficiary) {
 			setIsValidNric(false)
 		} else {
-			Router.push('/form')
+			Router.push({pathname: '/form', query: {nric: nric}})
 		}
 	}
 

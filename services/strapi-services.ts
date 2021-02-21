@@ -15,16 +15,37 @@ export const login = async (loginRequest: LoginRequest) => {
 }
 
 export const getBeneficiary = async (nric: string) => {
+	const {data} = await apiCall.get(
+		`/beneficiaries?nric=${nric}&_limit=1`,
+		getApiConfig(),
+	)
+
+	return data[0]
+}
+
+export const getBeneficiaryCollectionCountToday = async (nric: string) => {
+	const {data} = await apiCall.get(
+		`/collections/count?beneficiary.nric=${nric}&created_at_gte=${dateToday()}`,
+		getApiConfig(),
+	)
+	return data
+}
+
+export const getMaxCollectionCount = async () => {
+	const {data} = await apiCall.get(`/collection-count-today`, getApiConfig())
+	return data.maxCount
+}
+
+export const dateToday = () => {
+	const dt = new Date()
+	return dt.getFullYear() + '-0' + (dt.getMonth() + 1) + '-' + dt.getDate()
+}
+
+const getApiConfig = () => {
 	const {token} = parseCookies()
-	const config = {
+	return {
 		headers: {
 			Authorization: `Bearer ${token}`,
 		},
 	}
-
-	const {data} = await apiCall.get(
-		`/beneficiaries?nric=${nric}&_limit=1`,
-		config,
-	)
-	return data[0]
 }

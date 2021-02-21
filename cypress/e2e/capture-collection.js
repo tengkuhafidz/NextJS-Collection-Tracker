@@ -18,13 +18,15 @@ describe('Capture Collection', () => {
 		cy.findByText('Invalid NRIC')
 	})
 
-	// it('should identify the beneficiary given valid nric', () => {
-	// 	// GIVEN user is logged in
-	// 	cy.login('hafidz', 'Hafidz123!')
-	// 	// WHEN user provides valid beneficiary nric
-	// 	cy.findByPlaceholderText('NRIC').type('S1111111D')
-	// 	cy.findByRole('button', {name: 'Next'}).click()
-	// 	// THEN user should be redirected to collection tracker form
-	// 	// AND able to identify the beneficiary
-	// })
+	it('should identify the beneficiary given valid nric', () => {
+		// GIVEN user is logged in
+		cy.login('hafidz', 'Hafidz123!')
+		// WHEN user provides valid beneficiary nric
+		cy.findByPlaceholderText('NRIC').type('S1111111D')
+		cy.findByRole('button', {name: 'Next'}).click()
+		// THEN user should be redirected to collection tracker form
+		cy.url().should('include', '/form')
+		// AND able to identify the beneficiary
+		cy.findByText('hashim')
+	})
 })
