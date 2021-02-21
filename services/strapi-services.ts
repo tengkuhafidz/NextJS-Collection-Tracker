@@ -1,7 +1,7 @@
 import axios from 'axios'
 import getConfig from 'next/config'
 import {parseCookies} from 'nookies'
-import {LoginRequest} from '../typings'
+import {LoginRequest, RecordCollectionRequest} from '../typings'
 
 const {publicRuntimeConfig} = getConfig()
 
@@ -34,6 +34,18 @@ export const getBeneficiaryCollectionCountToday = async (nric: string) => {
 export const getMaxCollectionCount = async () => {
 	const {data} = await apiCall.get(`/collection-count-today`, getApiConfig())
 	return data.maxCount
+}
+
+export const recordCollection = async (beneficiaryId: string) => {
+	const {userId} = parseCookies()
+	const requestBody: RecordCollectionRequest = {
+		beneficiary: beneficiaryId,
+		units: 1,
+		users_permissions_user: userId,
+		lokasi: 'Johore Baharu',
+	}
+
+	await apiCall.post('/collections', requestBody, getApiConfig())
 }
 
 export const dateToday = () => {
