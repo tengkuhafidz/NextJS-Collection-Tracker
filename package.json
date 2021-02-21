@@ -7,7 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"test": "jest",
-		"test:e2e": "yarn test:e2e:run",
+		"test:e2e": "yarn test:e2e:open",
 		"test:e2e:run": "start-server-and-test start http://localhost:3000 cy:run",
 		"test:e2e:open": "start-server-and-test start http://localhost:3000 cy:open",
 		"cy:run": "cypress run",
@@ -17,7 +17,7 @@
 		"format": "yarn prettier --write",
 		"check-format": "prettier --list-different",
 		"check-types": "tsc",
-		"validate": "npm-run-all --parallel check-types lint test test:e2e build",
+		"validate": "npm-run-all --parallel check-types lint test test:e2e:run build",
 		"setup": "yarn install && yarn validate"
 	},
 	"dependencies": {
