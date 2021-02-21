@@ -1,40 +1,41 @@
-import Head from 'next/head'
-import {useState} from 'react'
-import {loginService} from '../services/login-service'
 import Router from 'next/router'
-import {setCookie} from 'nookies'
+import { setCookie } from 'nookies'
+import React, { useState } from 'react'
+import { ErrorBox } from '../components/error-box'
+import Layout from '../components/layout'
+import * as StrapiService from '../services/strapi-services'
 
 export default function Home() {
 	const [identifier, setIdentifier] = useState(null)
 	const [password, setPassword] = useState(null)
-	const [isInvalidCreds, setIsInvalidCreds] = useState(false)
+	const [isValidCreds, setIsValidCreds] = useState(true)
 
 	const handleChangeIdentifier = (identifier: string) => {
 		setIdentifier(identifier)
-		setIsInvalidCreds(false)
+		setIsValidCreds(true)
 	}
 
 	const handleChangePassword = (password: string) => {
 		setPassword(password)
-		setIsInvalidCreds(false)
+		setIsValidCreds(true)
 	}
 
 	const handleLogin = async () => {
 		try {
 			await loginUser()
 		} catch (e) {
-			setIsInvalidCreds(true)
+			setIsValidCreds(false)
 		}
 	}
 
 	const loginUser = async () => {
-		setIsInvalidCreds(false)
-		const userData = await loginService({identifier, password})
+		setIsValidCreds(true)
+		const userData = await StrapiService.login({identifier, password})
 		setCookies(userData)
 		Router.push('/')
 	}
 
-	const setCookies = (userData) => {
+	const setCookies = userData => {
 		const {
 			jwt,
 			user: {id, username},
@@ -46,24 +47,15 @@ export default function Home() {
 	}
 
 	const renderInvalidCredsError = () => {
-		if (!!identifier && !!password && isInvalidCreds) {
-			return (
-				<div className="bg-red-100 p-3 mt-4 text-center rounded-md">
-					<p className="font-semibold text-red-800">Invalid Credentials</p>
-				</div>
-			)
+		if (!isValidCreds && !!identifier && !!password) {
+			return <ErrorBox message="Invalid Credentials" />
 		}
 
 		return null
 	}
 
 	return (
-		<div>
-			<Head>
-				<title>NextJS Boilerplate</title>
-				<link rel="icon" href="/favicon.ico" />
-			</Head>
-
+		<Layout>
 			<main className="p-5">
 				<h1 className="text-3xl font-bold text-center mt-32 mb-16">
 					Collection Tracker
@@ -89,6 +81,6 @@ export default function Home() {
 					Login
 				</button>
 			</main>
-		</div>
+		</Layout>
 	)
 }
