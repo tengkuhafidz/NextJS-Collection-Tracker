@@ -1,4 +1,4 @@
-describe('Login', () => {
+describe('authentication', () => {
 	it('should disable button given empty password', () => {
 		// WHEN user goes to login page
 		cy.visit('/login')
@@ -31,5 +31,14 @@ describe('Login', () => {
 		cy.findByText('Capture NRIC')
 		// AND able to identify his username as the active user
 		cy.findByText('hafidz')
+	})
+
+	it('should logout successfully given valid user logged in', () => {
+		// WHEN user logs in with valid credentials
+		cy.login('hafidz', 'Hafidz123!')
+		// THEN user should be redirected to homepage
+		cy.findByText(/logout/i).click()
+		// AND able to identify his username as the active user
+		cy.findByText(/login/i)
 	})
 })

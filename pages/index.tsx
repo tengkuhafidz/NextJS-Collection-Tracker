@@ -1,5 +1,5 @@
 import Router from 'next/router'
-import {parseCookies} from 'nookies'
+import {destroyCookie, parseCookies} from 'nookies'
 import React, {useState} from 'react'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
@@ -9,6 +9,12 @@ export default function Home() {
 	const [nric, setNric] = useState(null)
 	const [isValidNric, setIsValidNric] = useState(true)
 	const {username} = parseCookies()
+
+	const handleLogout = () => {
+		destroyCookie(null, 'token')
+		destroyCookie(null, 'username')
+		Router.push('/login')
+	}
 
 	const handleNricChange = (nric: string) => {
 		setNric(nric)
@@ -38,7 +44,9 @@ export default function Home() {
 			<div>
 				<div className="flex">
 					<p className="p-2 text-gray-500 inline flex-grow">{username}</p>
-					<p className="p-2 text-gray-500 inline">logout</p>
+					<p className="p-2 text-gray-500 inline" onClick={handleLogout}>
+						logout
+					</p>
 				</div>
 
 				<main className="p-5">
