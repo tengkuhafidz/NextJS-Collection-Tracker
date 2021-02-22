@@ -4,12 +4,14 @@ import React, {useEffect, useState} from 'react'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
+import getConfig from 'next/config'
 
 export default function Form() {
 	const nric = Router.query.nric as string
 	const [beneficiary, setBeneficiary] = useState(null)
 	const [collectionCountToday, setCollectionCountToday] = useState(0)
 	const [maxCollectionCountToday, setMaxCollectionCountToday] = useState(0)
+	const [quantity, setQuantity] = useState(1)
 
 	useEffect(() => {
 		async function fetchAndSetData() {
@@ -32,27 +34,64 @@ export default function Form() {
 
 	const {nama, photo, id} = beneficiary
 
+	const handleQuantityIncrement = () => {
+		setQuantity(quantity + 1)
+	}
+
+	const handleQuantityDecrement = () => {
+		if (quantity <= 1) {
+			setQuantity(1)
+		} else {
+			setQuantity(quantity - 1)
+		}
+	}
+
 	const handleBack = async e => {
 		e.preventDefault()
 		Router.back()
 	}
 
 	const handleSubmit = async () => {
-		await StrapiService.recordCollection(id)
+		await StrapiService.recordCollection(id, quantity)
 		Router.push('/success')
 	}
 
 	const renderProfileImage = () => {
-		const imageUrl: string = photo?.formats?.thumbnail?.url
-		if (imageUrl) {
-			return <img src={imageUrl} className="h-24 rounded-md mx-auto" />
+		const imagePath: string = photo?.formats?.thumbnail?.url
+		if (imagePath) {
+			const {StrapiBaseUrl} = getConfig().publicRuntimeConfig
+			return (
+				<img
+					src={StrapiBaseUrl + imagePath}
+					className="h-24 rounded-md mx-auto"
+				/>
+			)
 		}
 		return null
 	}
 
-	const renderErrorBox = () => {
+	const renderQuantitySectionOrErrorBox = () => {
 		if (collectionCountToday >= maxCollectionCountToday) {
 			return <ErrorBox message="Maximum Collection Reached" />
+		} else {
+			return (
+				<div className="mx-auto text-center mb-8">
+					<p className="font-light mb-2">Units Collected:</p>
+					<button
+						onClick={handleQuantityDecrement}
+						className="mr-4 bg-gray-600 text-white px-2 pb-1 rounded-md"
+					>
+						-
+					</button>
+					<span className="font-semibold text-2xl">{quantity}</span>
+					<button
+						onClick={handleQuantityIncrement}
+						className="ml-4 bg-gray-600 text-white px-2 pb-1 rounded-md"
+					>
+						+
+					</button>
+				</div>
+			)
 		}
 	}
 
@@ -93,9 +132,10 @@ export default function Form() {
 						{maxCollectionCountToday}
 					</p>
 				</div>
+
 				<div className="mt-8 my-8">
-					{renderErrorBox()}
-					<div className="mt-8 my-8">{renderMainButton()}</div>
+					{renderQuantitySectionOrErrorBox()}
+					<div>{renderMainButton()}</div>
 				</div>
 			</main>
 		</Layout>

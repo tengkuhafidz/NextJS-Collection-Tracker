@@ -33,7 +33,7 @@ Cypress.Commands.add('login', (identifier, password) => {
 	cy.findByRole('button', {name: 'Login'}).click()
 })
 
-Cypress.Commands.add('captureNric', (nric) => {
+Cypress.Commands.add('captureNric', nric => {
 	// WHEN user provides valid beneficiary nric
 	cy.findByPlaceholderText('NRIC').type(nric)
 	cy.findByRole('button', {name: 'Next'}).click()
@@ -48,6 +48,12 @@ Cypress.Commands.add('recordCollection', (nric, count, maxCount = 3) => {
 	cy.findByText('hashim')
 	// AND see his total collection count against the maximum for the day
 	cy.findByText(`Collections Today: ${count} / ${maxCount}`)
+	// WHEN user changes the quantity of units
+	cy.findByRole('button', {name: '+'}).click()
+	cy.findByRole('button', {name: '+'}).click()
+	cy.findByRole('button', {name: '-'}).click()
+	// THEN the quantity should update accordingly
+	cy.findByText('2')
 	// WHEN user records his collection
 	cy.findByRole('button', {name: 'Submit'}).click()
 })

@@ -36,11 +36,14 @@ export const getMaxCollectionCount = async () => {
 	return data.maxCount
 }
 
-export const recordCollection = async (beneficiaryId: string) => {
+export const recordCollection = async (
+	beneficiaryId: string,
+	quantity: number,
+) => {
 	const {userId} = parseCookies()
 	const requestBody: RecordCollectionRequest = {
 		beneficiary: beneficiaryId,
-		units: 1,
+		units: quantity,
 		users_permissions_user: userId,
 		lokasi: 'Johore Baharu',
 	}
