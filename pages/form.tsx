@@ -1,10 +1,11 @@
 import Link from 'next/link'
 import Router from 'next/router'
 import React, {useEffect, useState} from 'react'
+import Camera from 'react-html5-camera-photo'
+import 'react-html5-camera-photo/build/css/index.css'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
-import getConfig from 'next/config'
 
 export default function Form() {
 	const nric = Router.query.nric as string
@@ -12,6 +13,8 @@ export default function Form() {
 	const [collectionCountToday, setCollectionCountToday] = useState(0)
 	const [maxCollectionCountToday, setMaxCollectionCountToday] = useState(0)
 	const [quantity, setQuantity] = useState(1)
+	const [isCameraActive, setIsCameraActive] = useState(false)
+	const [photo, setPhoto] = useState('/photo.png')
 
 	useEffect(() => {
 		async function fetchAndSetData() {
@@ -20,6 +23,11 @@ export default function Form() {
 				nric,
 			)
 			const maxCollectionCount = await StrapiService.getMaxCollectionCount()
+
+			const beneficiaryImageUrl = beneficiary.photo?.formats?.thumbnail?.url
+			if (beneficiaryImageUrl) {
+				setPhoto(beneficiaryImageUrl)
+			}
 
 			setBeneficiary(beneficiary)
 			setCollectionCountToday(collectionCount)
@@ -32,7 +40,7 @@ export default function Form() {
 		return null
 	}
 
-	const {nama, photo, id} = beneficiary
+	const {id, nama} = beneficiary
 
 	const handleQuantityIncrement = () => {
 		setQuantity(quantity + 1)
@@ -56,18 +64,37 @@ export default function Form() {
 		Router.push('/success')
 	}
 
+	const handleTakePhoto = async base64Image => {
+		const imageFile = await fetch(base64Image).then(res => res.blob())
+		const imageData = await StrapiService.uploadImage(imageFile, nama)
+		await StrapiService.updateProfileImage(id, imageData.id)
+
+		setPhoto(imageData.url)
+		setIsCameraActive(false)
+	}
+
 	const renderProfileImage = () => {
-		const imagePath: string = photo?.formats?.thumbnail?.url
-		if (imagePath) {
-			const {StrapiBaseUrl} = getConfig().publicRuntimeConfig
+		if (isCameraActive) {
 			return (
-				<img
-					src={StrapiBaseUrl + imagePath}
-					className="h-24 rounded-md mx-auto"
-				/>
+				<div>
+					<Camera
+						onTakePhoto={async dataUri => await handleTakePhoto(dataUri)}
+					/>
+					<p className="text-gray-600" onClick={() => setIsCameraActive(false)}>
+						[ close x ]
+					</p>
+				</div>
 			)
 		}
-		return null
+
+		return (
+			<img
+				src={photo}
+				alt="Beneficiary Photo"
+				onClick={() => setIsCameraActive(true)}
+				className="h-64 rounded-md mx-auto"
+			/>
+		)
 	}
 
 	const renderQuantitySectionOrErrorBox = () => {

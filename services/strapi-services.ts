@@ -36,6 +36,33 @@ export const getMaxCollectionCount = async () => {
 	return data.maxCount
 }
 
+export const uploadImage = async (imageFile, imageName) => {
+	const formData = new FormData()
+	formData.append('files', imageFile, imageName)
+
+	const {token} = parseCookies()
+
+	const {data} = await apiCall.post('/upload', formData, {
+		headers: {
+			'Content-Type': 'multipart/form-data',
+			Authorization: `Bearer ${token}`,
+		},
+	})
+
+	return data[0]
+}
+
+export const updateProfileImage = async (
+	beneficiaryId: string,
+	imageId: string,
+) => {
+	await apiCall.put(
+		`/beneficiaries/${beneficiaryId}`,
+		{photo: imageId},
+		getApiConfig(),
+	)
+}
+
 export const recordCollection = async (
 	beneficiaryId: string,
 	quantity: number,
