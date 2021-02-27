@@ -14,18 +14,18 @@ export const login = async (loginRequest: LoginRequest) => {
 	return data
 }
 
-export const getBeneficiary = async (nric: string) => {
+export const getCustomer = async (officialId: string) => {
 	const {data} = await apiCall.get(
-		`/beneficiaries?nric=${nric}&_limit=1`,
+		`/customers?official_id=${officialId}&_limit=1`,
 		getApiConfig(),
 	)
 
 	return data[0]
 }
 
-export const getBeneficiaryCollectionCountToday = async (nric: string) => {
+export const getCustomerCollectionCountToday = async (officialId: string) => {
 	const {data} = await apiCall.get(
-		`/collections/count?beneficiary.nric=${nric}&created_at_gte=${dateToday()}`,
+		`/collections/count?customer.official_id=${officialId}&created_at_gte=${dateToday()}`,
 		getApiConfig(),
 	)
 	return data
@@ -53,23 +53,23 @@ export const uploadImage = async (imageFile, imageName) => {
 }
 
 export const updateProfileImage = async (
-	beneficiaryId: string,
+	customerId: string,
 	imageId: string,
 ) => {
 	await apiCall.put(
-		`/beneficiaries/${beneficiaryId}`,
+		`/customers/${customerId}`,
 		{photo: imageId},
 		getApiConfig(),
 	)
 }
 
 export const recordCollection = async (
-	beneficiaryId: string,
+	customerId: string,
 	quantity: number,
 ) => {
 	const {userId} = parseCookies()
 	const requestBody: RecordCollectionRequest = {
-		beneficiary: beneficiaryId,
+		customer: customerId,
 		units: quantity,
 		users_permissions_user: userId,
 		lokasi: 'Johore Baharu',

@@ -33,18 +33,18 @@ Cypress.Commands.add('login', (identifier, password) => {
 	cy.findByRole('button', {name: 'Login'}).click()
 })
 
-Cypress.Commands.add('captureNric', nric => {
-	// WHEN user provides valid beneficiary nric
-	cy.findByPlaceholderText('NRIC').type(nric)
+Cypress.Commands.add('captureOfficialId', officialId => {
+	// WHEN user provides valid customer official id
+	cy.findByPlaceholderText('Official ID').type(officialId)
 	cy.findByRole('button', {name: 'Next'}).click()
 })
 
-Cypress.Commands.add('recordCollection', (nric, count, maxCount = 3) => {
-	// WHEN user provides valid beneficiary nric
-	cy.captureNric(nric)
+Cypress.Commands.add('recordCollection', (officialId, count, maxCount = 3) => {
+	// WHEN user provides valid customer official id
+	cy.captureOfficialId(officialId)
 	// THEN user should be redirected to collection tracker form
 	cy.url().should('include', '/form')
-	// AND able to identify the beneficiary
+	// AND able to identify the customer
 	cy.findByText('hashim')
 	// AND see his total collection count against the maximum for the day
 	cy.findByText(`Collections Today: ${count} / ${maxCount}`)

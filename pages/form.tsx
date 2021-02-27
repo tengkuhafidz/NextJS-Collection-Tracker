@@ -8,8 +8,8 @@ import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
 
 export default function Form() {
-	const nric = Router.query.nric as string
-	const [beneficiary, setBeneficiary] = useState(null)
+	const officialId = Router.query.officialId as string
+	const [customer, setCustomer] = useState(null)
 	const [collectionCountToday, setCollectionCountToday] = useState(0)
 	const [maxCollectionCountToday, setMaxCollectionCountToday] = useState(0)
 	const [quantity, setQuantity] = useState(1)
@@ -18,18 +18,18 @@ export default function Form() {
 
 	useEffect(() => {
 		async function fetchAndSetData() {
-			const beneficiary = await StrapiService.getBeneficiary(nric)
-			const collectionCount = await StrapiService.getBeneficiaryCollectionCountToday(
-				nric,
+			const customer = await StrapiService.getCustomer(officialId)
+			const collectionCount = await StrapiService.getCustomerCollectionCountToday(
+				officialId,
 			)
 			const maxCollectionCount = await StrapiService.getMaxCollectionCount()
 
-			const beneficiaryImageUrl = beneficiary.photo?.formats?.thumbnail?.url
-			if (beneficiaryImageUrl) {
-				setPhoto(beneficiaryImageUrl)
+			const customerPhotoUrl = customer.photo?.formats?.thumbnail?.url
+			if (customerPhotoUrl) {
+				setPhoto(customerPhotoUrl)
 			}
 
-			setBeneficiary(beneficiary)
+			setCustomer(customer)
 			setCollectionCountToday(collectionCount)
 			setMaxCollectionCountToday(maxCollectionCount)
 		}
@@ -40,7 +40,7 @@ export default function Form() {
 		return null
 	}
 
-	const {id, nama} = beneficiary
+	const {id, name} = customer
 
 	const handleQuantityIncrement = () => {
 		setQuantity(quantity + 1)
@@ -66,7 +66,7 @@ export default function Form() {
 
 	const handleTakePhoto = async base64Image => {
 		const imageFile = await fetch(base64Image).then(res => res.blob())
-		const imageData = await StrapiService.uploadImage(imageFile, nama)
+		const imageData = await StrapiService.uploadImage(imageFile, name)
 		await StrapiService.updateProfileImage(id, imageData.id)
 
 		setPhoto(imageData.url)
@@ -90,7 +90,7 @@ export default function Form() {
 		return (
 			<img
 				src={photo}
-				alt="Beneficiary Photo"
+				alt="Customer Photo"
 				onClick={() => setIsCameraActive(true)}
 				className="h-64 rounded-md mx-auto"
 			/>
@@ -153,7 +153,7 @@ export default function Form() {
 			<main className="mt-16 p-8">
 				<div className="text-center">
 					{renderProfileImage()}
-					<h1 className="mt-4 text-xl font-semibold">{nama}</h1>
+					<h1 className="mt-4 text-xl font-semibold">{name}</h1>
 					<p>
 						Collections Today: {collectionCountToday} /{' '}
 						{maxCollectionCountToday}

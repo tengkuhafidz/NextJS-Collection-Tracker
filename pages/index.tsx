@@ -6,8 +6,8 @@ import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
 
 export default function Home() {
-	const [nric, setNric] = useState(null)
-	const [isValidNric, setIsValidNric] = useState(true)
+	const [officialId, setOfficialId] = useState(null)
+	const [isValidOfficialId, setIsValidOfficialId] = useState(true)
 	const {username} = parseCookies()
 
 	const handleLogout = () => {
@@ -16,24 +16,24 @@ export default function Home() {
 		Router.push('/login')
 	}
 
-	const handleNricChange = (nric: string) => {
-		setNric(nric)
-		setIsValidNric(true)
+	const handleOfficialIdChange = (officialId: string) => {
+		setOfficialId(officialId)
+		setIsValidOfficialId(true)
 	}
 
-	const handleCaptureNric = async () => {
-		const beneficiary = await StrapiService.getBeneficiary(nric)
+	const handleCaptureOfficialId = async () => {
+		const customer = await StrapiService.getCustomer(officialId)
 
-		if (!beneficiary) {
-			setIsValidNric(false)
+		if (!customer) {
+			setIsValidOfficialId(false)
 		} else {
-			Router.push({pathname: '/form', query: {nric: nric}})
+			Router.push({pathname: '/form', query: {officialId}})
 		}
 	}
 
-	const renderInvalidNricError = () => {
-		if (!isValidNric && !!nric) {
-			return <ErrorBox message="Invalid NRIC" />
+	const renderInvalidOfficialIdError = () => {
+		if (!isValidOfficialId && !!officialId) {
+			return <ErrorBox message="Invalid Official ID" />
 		}
 
 		return null
@@ -51,19 +51,19 @@ export default function Home() {
 
 				<main className="p-5">
 					<h1 className="text-3xl font-bold text-center mt-32 mb-8">
-						Capture NRIC
+						Capture Official ID
 					</h1>
 					<input
 						type="text"
-						placeholder="NRIC"
+						placeholder="Official ID"
 						className="standard-input"
-						onChange={e => handleNricChange(e.target.value)}
+						onChange={e => handleOfficialIdChange(e.target.value)}
 					/>
-					{renderInvalidNricError()}
+					{renderInvalidOfficialIdError()}
 					<button
 						className="text-xl bg-black rounded-md text-white w-full p-3 mt-8 disabled:opacity-60 disabled:cursor-not-allowed"
-						disabled={!nric}
-						onClick={handleCaptureNric}
+						disabled={!officialId}
+						onClick={handleCaptureOfficialId}
 					>
 						Next
 					</button>

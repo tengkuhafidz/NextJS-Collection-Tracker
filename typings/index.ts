@@ -4,8 +4,8 @@ export interface LoginRequest {
 }
 
 export interface RecordCollectionRequest {
-  units: number;
-  beneficiary: string;
-  users_permissions_user: string;
-  lokasi: string;
+	units: number
+	customer: string
+	users_permissions_user: string
+	lokasi: string
 }
