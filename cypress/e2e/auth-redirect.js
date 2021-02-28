@@ -10,10 +10,10 @@ describe('Authentication Redirect', () => {
 		// WHEN user is logged in
 		cy.login('hafidz', 'Hafidz123!')
 		// THEN user should be redirected to homepage
-		cy.findByText('Capture Official ID')
+		cy.findByText('Capture ID')
 		// WHEN user goes to login page
 		cy.visit('/login')
 		// THEN user should be redirected to homepage again
-		cy.findByText('Capture Official ID')
+		cy.findByText('Capture ID')
 	})
 })

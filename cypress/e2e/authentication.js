@@ -28,7 +28,7 @@ describe('authentication', () => {
 		// WHEN user logs in with valid credentials
 		cy.login('hafidz', 'Hafidz123!')
 		// THEN user should be redirected to homepage
-		cy.findByText('Capture Official ID')
+		cy.findByText('Capture ID')
 		// AND able to identify his username as the active user
 		cy.findByText('hafidz')
 	})

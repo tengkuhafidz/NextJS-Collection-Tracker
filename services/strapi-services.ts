@@ -14,18 +14,18 @@ export const login = async (loginRequest: LoginRequest) => {
 	return data
 }
 
-export const getCustomer = async (officialId: string) => {
+export const getCustomer = async (customerId: string) => {
 	const {data} = await apiCall.get(
-		`/customers?official_id=${officialId}&_limit=1`,
+		`/customers?id=${customerId}&_limit=1`,
 		getApiConfig(),
 	)
 
 	return data[0]
 }
 
-export const getCustomerCollectionCountToday = async (officialId: string) => {
+export const getCustomerCollectionCountToday = async (customerId: string) => {
 	const {data} = await apiCall.get(
-		`/collections/count?customer.official_id=${officialId}&created_at_gte=${dateToday()}`,
+		`/collections/count?customer.id=${customerId}&created_at_gte=${dateToday()}`,
 		getApiConfig(),
 	)
 	return data

@@ -8,7 +8,7 @@ import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
 
 export default function Form() {
-	const officialId = Router.query.officialId as string
+	const customerId = Router.query.customerId as string
 	const [customer, setCustomer] = useState(null)
 	const [collectionCountToday, setCollectionCountToday] = useState(0)
 	const [maxCollectionCountToday, setMaxCollectionCountToday] = useState(0)
@@ -18,9 +18,9 @@ export default function Form() {
 
 	useEffect(() => {
 		async function fetchAndSetData() {
-			const customer = await StrapiService.getCustomer(officialId)
+			const customer = await StrapiService.getCustomer(customerId)
 			const collectionCount = await StrapiService.getCustomerCollectionCountToday(
-				officialId,
+				customerId,
 			)
 			const maxCollectionCount = await StrapiService.getMaxCollectionCount()
 

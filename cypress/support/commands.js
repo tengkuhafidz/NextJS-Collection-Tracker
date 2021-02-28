@@ -33,19 +33,19 @@ Cypress.Commands.add('login', (identifier, password) => {
 	cy.findByRole('button', {name: 'Login'}).click()
 })
 
-Cypress.Commands.add('captureOfficialId', officialId => {
-	// WHEN user provides valid customer official id
-	cy.findByPlaceholderText('Official ID').type(officialId)
+Cypress.Commands.add('captureCustomerId', customerId => {
+	// WHEN user provides valid customer ID
+	cy.findByPlaceholderText('ID').type(customerId)
 	cy.findByRole('button', {name: 'Next'}).click()
 })
 
-Cypress.Commands.add('recordCollection', (officialId, count, maxCount = 3) => {
-	// WHEN user provides valid customer official id
-	cy.captureOfficialId(officialId)
+Cypress.Commands.add('recordCollection', (customerId, count, maxCount = 3) => {
+	// WHEN user provides valid customer ID
+	cy.captureCustomerId(customerId)
 	// THEN user should be redirected to collection tracker form
 	cy.url().should('include', '/form')
 	// AND able to identify the customer
-	cy.findByText('hashim')
+	cy.findByText('hirman')
 	// AND see his total collection count against the maximum for the day
 	cy.findByText(`Collections Today: ${count} / ${maxCount}`)
 	// WHEN user changes the quantity of units

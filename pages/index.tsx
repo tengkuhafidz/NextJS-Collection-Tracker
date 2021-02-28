@@ -6,8 +6,8 @@ import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
 
 export default function Home() {
-	const [officialId, setOfficialId] = useState(null)
-	const [isValidOfficialId, setIsValidOfficialId] = useState(true)
+	const [customerId, setCustomerId] = useState(null)
+	const [isValidCustomerId, setIsValidCustomerId] = useState(true)
 	const {username} = parseCookies()
 
 	const handleLogout = () => {
@@ -16,24 +16,24 @@ export default function Home() {
 		Router.push('/login')
 	}
 
-	const handleOfficialIdChange = (officialId: string) => {
-		setOfficialId(officialId)
-		setIsValidOfficialId(true)
+	const handleCustomerIdChange = (customerId: string) => {
+		setCustomerId(customerId)
+		setIsValidCustomerId(true)
 	}
 
-	const handleCaptureOfficialId = async () => {
-		const customer = await StrapiService.getCustomer(officialId)
+	const handleCaptureCustomerId = async () => {
+		const customer = await StrapiService.getCustomer(customerId)
 
 		if (!customer) {
-			setIsValidOfficialId(false)
+			setIsValidCustomerId(false)
 		} else {
-			Router.push({pathname: '/form', query: {officialId}})
+			Router.push({pathname: '/form', query: {customerId}})
 		}
 	}
 
-	const renderInvalidOfficialIdError = () => {
-		if (!isValidOfficialId && !!officialId) {
-			return <ErrorBox message="Invalid Official ID" />
+	const renderInvalidCustomerIdError = () => {
+		if (!isValidCustomerId && !!customerId) {
+			return <ErrorBox message="Invalid ID" />
 		}
 
 		return null
@@ -51,19 +51,19 @@ export default function Home() {
 
 				<main className="p-5">
 					<h1 className="text-3xl font-bold text-center mt-32 mb-8">
-						Capture Official ID
+						Capture ID
 					</h1>
 					<input
 						type="text"
-						placeholder="Official ID"
+						placeholder="ID"
 						className="standard-input"
-						onChange={e => handleOfficialIdChange(e.target.value)}
+						onChange={e => handleCustomerIdChange(e.target.value)}
 					/>
-					{renderInvalidOfficialIdError()}
+					{renderInvalidCustomerIdError()}
 					<button
 						className="text-xl bg-black rounded-md text-white w-full p-3 mt-8 disabled:opacity-60 disabled:cursor-not-allowed"
-						disabled={!officialId}
-						onClick={handleCaptureOfficialId}
+						disabled={!customerId}
+						onClick={handleCaptureCustomerId}
 					>
 						Next
 					</button>
