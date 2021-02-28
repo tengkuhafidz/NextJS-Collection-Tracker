@@ -1,7 +1,7 @@
 import Router from 'next/router'
-import { setCookie } from 'nookies'
-import React, { useState } from 'react'
-import { ErrorBox } from '../components/error-box'
+import {setCookie} from 'nookies'
+import React, {useState} from 'react'
+import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
 
@@ -9,6 +9,7 @@ export default function Home() {
 	const [identifier, setIdentifier] = useState(null)
 	const [password, setPassword] = useState(null)
 	const [isValidCreds, setIsValidCreds] = useState(true)
+	const [isLoading, setIsLoading] = useState(false)
 
 	const handleChangeIdentifier = (identifier: string) => {
 		setIdentifier(identifier)
@@ -21,11 +22,13 @@ export default function Home() {
 	}
 
 	const handleLogin = async () => {
+		setIsLoading(true)
 		try {
 			await loginUser()
 		} catch (e) {
 			setIsValidCreds(false)
 		}
+		setIsLoading(false)
 	}
 
 	const loginUser = async () => {
@@ -54,6 +57,30 @@ export default function Home() {
 		return null
 	}
 
+	const renderLoginButton = () => {
+		if (isLoading) {
+			return (
+				<button
+					className="text-xl bg-black rounded-md text-white w-full p-3 mt-8 opacity-60 cursor-not-allowed"
+					disabled
+				>
+					Loading...
+				</button>
+			)
+		}
+		return (
+			<button
+				onClick={handleLogin}
+				className={`text-xl bg-black rounded-md text-white w-full p-3 mt-8 disabled:opacity-60 disabled:cursor-not-allowed ${
+					isLoading && 'opacity-60 cursor-not-allowed'
+				}`}
+				disabled={!identifier || !password || isLoading}
+			>
+				{isLoading ? 'Loading...' : 'Login'}
+			</button>
+		)
+	}
+
 	return (
 		<Layout>
 			<main className="p-5">
@@ -73,13 +100,7 @@ export default function Home() {
 					onChange={e => handleChangePassword(e.target.value)}
 				/>
 				{renderInvalidCredsError()}
-				<button
-					onClick={handleLogin}
-					className="text-xl bg-black rounded-md text-white w-full p-3 mt-8 disabled:opacity-60 disabled:cursor-not-allowed"
-					disabled={!identifier || !password}
-				>
-					Login
-				</button>
+				{renderLoginButton()}
 			</main>
 		</Layout>
 	)

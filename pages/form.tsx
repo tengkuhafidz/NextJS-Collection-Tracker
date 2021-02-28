@@ -6,6 +6,7 @@ import 'react-html5-camera-photo/build/css/index.css'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
+import BounceLoader from 'react-spinners/BounceLoader'
 
 export default function Form() {
 	const customerId = Router.query.customerId as string
@@ -15,6 +16,8 @@ export default function Form() {
 	const [quantity, setQuantity] = useState(1)
 	const [isCameraActive, setIsCameraActive] = useState(false)
 	const [photo, setPhoto] = useState('/photo.png')
+	const [isLoadingImage, setIsLoadingImage] = useState(false)
+	const [isLoadingSubmission, setIsLoadingSubmission] = useState(false)
 
 	useEffect(() => {
 		async function fetchAndSetData() {
@@ -60,20 +63,36 @@ export default function Form() {
 	}
 
 	const handleSubmit = async () => {
-		await StrapiService.recordCollection(id, quantity)
-		Router.push('/success')
+		setIsLoadingSubmission(true)
+		try {
+			await StrapiService.recordCollection(id, quantity)
+			Router.push('/success')
+		} catch (e) {
+			console.log('ERROR recordCollection for', id, e)
+			setIsLoadingSubmission(false)
+		}
 	}
 
 	const handleTakePhoto = async base64Image => {
+		setIsLoadingImage(true)
 		const imageFile = await fetch(base64Image).then(res => res.blob())
 		const imageData = await StrapiService.uploadImage(imageFile, name)
 		await StrapiService.updateProfileImage(id, imageData.id)
 
 		setPhoto(imageData.url)
+		setIsLoadingImage(false)
 		setIsCameraActive(false)
 	}
 
 	const renderProfileImage = () => {
+		if (isLoadingImage) {
+			return (
+				<div className="-ml-12 pl-0 h-24">
+					<BounceLoader color="#333333" size={60} />
+				</div>
+			)
+		}
+
 		if (isCameraActive) {
 			return (
 				<div>
@@ -135,10 +154,13 @@ export default function Form() {
 
 		return (
 			<button
-				className="mt-8 p-3 w-full bg-black text-white rounded-md text-xl"
+				className={`mt-8 p-3 w-full bg-black text-white rounded-md text-xl ${
+					isLoadingSubmission && 'opacity-60 cursor-not-allowed'
+				}`}
+				disabled={isLoadingSubmission}
 				onClick={handleSubmit}
 			>
-				Submit
+				{isLoadingSubmission ? 'Loading...' : 'Submit'}
 			</button>
 		)
 	}

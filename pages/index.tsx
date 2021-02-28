@@ -8,6 +8,7 @@ import * as StrapiService from '../services/strapi-services'
 export default function Home() {
 	const [customerId, setCustomerId] = useState(null)
 	const [isValidCustomerId, setIsValidCustomerId] = useState(true)
+	const [isLoading, setIsLoading] = useState(false)
 	const {username} = parseCookies()
 
 	const handleLogout = () => {
@@ -22,10 +23,18 @@ export default function Home() {
 	}
 
 	const handleCaptureCustomerId = async () => {
-		const customer = await StrapiService.getCustomer(customerId)
+		setIsLoading(true)
+		let customer
+
+		try {
+			customer = await StrapiService.getCustomer(customerId)
+		} catch (e) {
+			console.log('ERROR getCustomer for customer ID: ', customerId, e)
+		}
 
 		if (!customer) {
 			setIsValidCustomerId(false)
+			setIsLoading(false)
 		} else {
 			Router.push({pathname: '/form', query: {customerId}})
 		}
@@ -61,11 +70,13 @@ export default function Home() {
 					/>
 					{renderInvalidCustomerIdError()}
 					<button
-						className="text-xl bg-black rounded-md text-white w-full p-3 mt-8 disabled:opacity-60 disabled:cursor-not-allowed"
-						disabled={!customerId}
+						className={`text-xl bg-black rounded-md text-white w-full p-3 mt-8 disabled:opacity-60 disabled:cursor-not-allowed ${
+							isLoading && 'opacity-60 cursor-not-allowed'
+						}`}
+						disabled={!customerId || isLoading}
 						onClick={handleCaptureCustomerId}
 					>
-						Next
+						{isLoading ? 'Loading...' : 'Next'}
 					</button>
 				</main>
 			</div>

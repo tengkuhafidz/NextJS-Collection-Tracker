@@ -27,7 +27,8 @@
 		"nookies": "^2.5.2",
 		"react": "17.0.1",
 		"react-dom": "17.0.1",
-		"react-html5-camera-photo": "^1.5.4"
+		"react-html5-camera-photo": "^1.5.4",
+		"react-spinners": "^0.10.6"
 	},
 	"devDependencies": {
 		"@testing-library/cypress": "^7.0.3",
