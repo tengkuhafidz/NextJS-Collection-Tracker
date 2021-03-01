@@ -80,7 +80,15 @@ export const recordCollection = async (
 
 export const dateToday = () => {
 	const dt = new Date()
-	return dt.getFullYear() + '-0' + (dt.getMonth() + 1) + '-' + dt.getDate()
+
+	// doing this computational gymnastics to achieve this format: 2021-01-01
+	return (
+		dt.getFullYear() +
+		'-' +
+		('0' + dt.getMonth() + 1).slice(-2) +
+		'-' +
+		('0' + dt.getDate()).slice(-2)
+	)
 }
 
 const getApiConfig = () => {
