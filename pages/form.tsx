@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Router from 'next/router'
 import React, {useEffect, useState} from 'react'
-import Camera from 'react-html5-camera-photo'
+import Camera, {FACING_MODES} from 'react-html5-camera-photo'
 import 'react-html5-camera-photo/build/css/index.css'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
@@ -98,6 +98,7 @@ export default function Form() {
 				<div>
 					<Camera
 						onTakePhoto={async dataUri => await handleTakePhoto(dataUri)}
+						idealFacingMode={FACING_MODES.ENVIRONMENT}
 					/>
 					<p className="text-gray-600" onClick={() => setIsCameraActive(false)}>
 						[ close x ]
