@@ -99,6 +99,7 @@ export default function Form() {
 					<Camera
 						onTakePhoto={async dataUri => await handleTakePhoto(dataUri)}
 						idealFacingMode={FACING_MODES.ENVIRONMENT}
+						isImageMirror={false}
 					/>
 					<p className="text-gray-600" onClick={() => setIsCameraActive(false)}>
 						[ close x ]
