@@ -1,4 +1,5 @@
 import Router from 'next/router'
+import Image from 'next/image'
 import {setCookie} from 'nookies'
 import React, {useState} from 'react'
 import {ErrorBox} from '../components/error-box'
@@ -84,7 +85,16 @@ export default function Home() {
 	return (
 		<Layout>
 			<main className="p-5">
-				<h1 className="text-3xl font-bold text-center mt-32 mb-16">
+				<div className="flex justify-center mt-4">
+					<Image
+						src="/nafas-logo.png"
+						height={110}
+						width={100}
+						alt="Nafas Logo"
+						className="mx-auto"
+					/>
+				</div>
+				<h1 className="text-3xl font-bold text-center mt-12 mb-8">
 					Collection Tracker
 				</h1>
 				<input
