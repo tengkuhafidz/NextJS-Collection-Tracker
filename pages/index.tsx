@@ -84,7 +84,7 @@ export default function Home() {
 							isScannerActive ? 'mt-8' : 'mt-32'
 						}`}
 					>
-						Capture ID {customerId}
+						Capture ID
 					</h1>
 					{renderQrScanner()}
 					<div className="flex">
