@@ -4,7 +4,11 @@ import React, {useState} from 'react'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
-import QrReader from 'react-qr-scanner'
+
+import dynamic from 'next/dynamic'
+const ClientQrScanner = dynamic(() => import('../components/qr-scanner'), {
+	ssr: false,
+})
 
 export default function Home() {
 	const [customerId, setCustomerId] = useState(null)
@@ -54,15 +58,7 @@ export default function Home() {
 		if (!isScannerActive) {
 			return null
 		}
-		return (
-			<QrReader
-				delay={300}
-				onScan={data => setCustomerId(data)}
-				onError={e => console.log(e)}
-				facingMode="rear"
-				className="mb-4 h-12"
-			/>
-		)
+		return <ClientQrScanner setCustomerId={setCustomerId} />
 	}
 
 	return (
