@@ -7,7 +7,7 @@ const QrScanner = ({setCustomerId}) => (
 			delay={300}
 			onScan={data => setCustomerId(data)}
 			onError={e => console.log(e)}
-			className="mb-4 h-12"
+			style={{marginBottom: '12px'}}
 		/>
 	</div>
 )

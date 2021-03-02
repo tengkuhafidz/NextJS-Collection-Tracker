@@ -72,7 +72,11 @@ export default function Home() {
 				</div>
 
 				<main className="p-5">
-					<h1 className="text-3xl font-bold text-center mt-32 mb-8">
+					<h1
+						className={`text-3xl font-bold text-center mb-8 ${
+							isScannerActive ? 'mt-8' : 'mt-32'
+						}`}
+					>
 						Capture ID
 					</h1>
 					{renderQrScanner()}
