@@ -47,8 +47,10 @@ export default function Home() {
 	}
 
 	const handleScan = data => {
-		setCustomerId(data)
-		setIsScannerActive(false)
+		if (data) {
+			setCustomerId(data)
+			setIsScannerActive(false)
+		}
 	}
 
 	const renderInvalidCustomerIdError = () => {
