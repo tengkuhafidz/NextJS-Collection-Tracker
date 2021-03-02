@@ -46,6 +46,11 @@ export default function Home() {
 		}
 	}
 
+	const handleScan = data => {
+		setCustomerId(data)
+		setIsScannerActive(false)
+	}
+
 	const renderInvalidCustomerIdError = () => {
 		if (!isValidCustomerId && !!customerId) {
 			return <ErrorBox message="Invalid ID" />
@@ -58,7 +63,7 @@ export default function Home() {
 		if (!isScannerActive) {
 			return null
 		}
-		return <ClientQrScanner setCustomerId={setCustomerId} />
+		return <ClientQrScanner handleScan={handleScan} />
 	}
 
 	return (
@@ -77,7 +82,7 @@ export default function Home() {
 							isScannerActive ? 'mt-8' : 'mt-32'
 						}`}
 					>
-						Capture ID
+						Capture ID {customerId}
 					</h1>
 					{renderQrScanner()}
 					<div className="flex">
@@ -90,9 +95,9 @@ export default function Home() {
 						/>
 						<button
 							className="ml-1 px-2 bg-gray-800 text-white rounded-md w-12"
-							onClick={() => setIsScannerActive(!isScannerActive)}
+							onClick={() => setIsScannerActive(true)}
 						>
-							{isScannerActive ? 'x' : 'scan'}
+							scan
 						</button>
 					</div>
 					{renderInvalidCustomerIdError()}
