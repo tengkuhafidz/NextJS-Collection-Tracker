@@ -16,11 +16,13 @@ export default function Form() {
 	const [quantity, setQuantity] = useState(1)
 	const [isCameraActive, setIsCameraActive] = useState(false)
 	const [photo, setPhoto] = useState('/photo.png')
+	const [isLoadingPage, setIsLoadingPage] = useState(false)
 	const [isLoadingImage, setIsLoadingImage] = useState(false)
 	const [isLoadingSubmission, setIsLoadingSubmission] = useState(false)
 
 	useEffect(() => {
 		async function fetchAndSetData() {
+			setIsLoadingPage(true)
 			const customer = await StrapiService.getCustomer(customerId)
 			const collectionCount = await StrapiService.getCustomerCollectionCountToday(
 				customerId,
@@ -35,15 +37,31 @@ export default function Form() {
 			setCustomer(customer)
 			setCollectionCountToday(collectionCount)
 			setMaxCollectionCountToday(maxCollectionCount)
+			setIsLoadingPage(false)
 		}
 		fetchAndSetData()
 	}, [])
 
-	if (!maxCollectionCountToday) {
-		return null
+	if (isLoadingPage) {
+		return (
+			<div className="flex justify-center items-center h-screen">
+				<BounceLoader color="#333333" size={100} />
+			</div>
+		)
 	}
 
-	const {id, name} = customer
+	if (!maxCollectionCountToday) {
+		return (
+			<p>
+				Error. Max collection is not set in Strapi.{' '}
+				<Link href="/">
+					<a>Back to home</a>
+				</Link>
+			</p>
+		)
+	}
+
+	const {id, name, known_illness} = customer
 
 	const handleQuantityIncrement = () => {
 		setQuantity(quantity + 1)
@@ -143,6 +161,14 @@ export default function Form() {
 		}
 	}
 
+	const renderKnownIllness = () => {
+		if (!known_illness) {
+			return null
+		}
+
+		return <p className="font-semibold text-yellow-800">[{known_illness}]</p>
+	}
+
 	const renderMainButton = () => {
 		if (collectionCountToday >= maxCollectionCountToday) {
 			return (
@@ -182,6 +208,7 @@ export default function Form() {
 						Collections Today: {collectionCountToday} /{' '}
 						{maxCollectionCountToday}
 					</p>
+					{renderKnownIllness()}
 				</div>
 
 				<div className="mt-8 my-8">
