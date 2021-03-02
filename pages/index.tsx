@@ -59,7 +59,7 @@ export default function Home() {
 				delay={300}
 				onScan={data => setCustomerId(data)}
 				onError={e => console.log(e)}
-				facingMode="front"
+				facingMode="rear"
 				className="mb-4 h-12"
 			/>
 		)
@@ -77,7 +77,7 @@ export default function Home() {
 
 				<main className="p-5">
 					<h1 className="text-3xl font-bold text-center mt-32 mb-8">
-						Capture ID {customerId}
+						Capture ID
 					</h1>
 					{renderQrScanner()}
 					<div className="flex">

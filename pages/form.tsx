@@ -166,7 +166,7 @@ export default function Form() {
 			return null
 		}
 
-		return <p className="font-semibold text-yellow-800">[{known_illness}]</p>
+		return <p className="font-semibold text-red-800">[{known_illness}]</p>
 	}
 
 	const renderMainButton = () => {
