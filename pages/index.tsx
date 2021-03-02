@@ -59,7 +59,8 @@ export default function Home() {
 				delay={300}
 				onScan={data => setCustomerId(data)}
 				onError={e => console.log(e)}
-				facingMode="rear"
+				facingMode="front"
+				className="mb-4 h-12"
 			/>
 		)
 	}
