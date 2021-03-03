@@ -5,8 +5,14 @@ import React, {useState} from 'react'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
+import mixpanel from 'mixpanel-browser'
+import getConfig from 'next/config'
+
+const {publicRuntimeConfig} = getConfig()
 
 export default function Home() {
+	mixpanel.init(publicRuntimeConfig.MixpanelToken)
+
 	const [identifier, setIdentifier] = useState(null)
 	const [password, setPassword] = useState(null)
 	const [isValidCreds, setIsValidCreds] = useState(true)
@@ -26,7 +32,9 @@ export default function Home() {
 		setIsLoading(true)
 		try {
 			await loginUser()
+			mixpanel.track('login_success', {identifier})
 		} catch (e) {
+			mixpanel.track('login_failed', {identifier})
 			setIsValidCreds(false)
 		}
 		setIsLoading(false)

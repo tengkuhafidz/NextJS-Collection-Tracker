@@ -4,6 +4,10 @@ import React, {useState} from 'react'
 import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
+import mixpanel from 'mixpanel-browser'
+import getConfig from 'next/config'
+
+const {publicRuntimeConfig} = getConfig()
 
 import dynamic from 'next/dynamic'
 const ClientQrScanner = dynamic(() => import('../components/qr-scanner'), {
@@ -11,6 +15,8 @@ const ClientQrScanner = dynamic(() => import('../components/qr-scanner'), {
 })
 
 export default function Home() {
+	mixpanel.init(publicRuntimeConfig.MixpanelToken)
+
 	const [customerId, setCustomerId] = useState(null)
 	const [isValidCustomerId, setIsValidCustomerId] = useState(true)
 	const [isLoading, setIsLoading] = useState(false)
@@ -18,6 +24,7 @@ export default function Home() {
 	const {username} = parseCookies()
 
 	const handleLogout = () => {
+		mixpanel.track('logout', {username})
 		destroyCookie(null, 'token')
 		destroyCookie(null, 'username')
 		Router.push('/login')
@@ -35,13 +42,16 @@ export default function Home() {
 		try {
 			customer = await StrapiService.getCustomer(customerId)
 		} catch (e) {
+			mixpanel.track('capture_customer_error', {customerId})
 			console.log('ERROR getCustomer for customer ID: ', customerId, e)
 		}
 
 		if (!customer) {
 			setIsValidCustomerId(false)
+			mixpanel.track('capture_customer_invalid', {customerId})
 			setIsLoading(false)
 		} else {
+			mixpanel.track('capture_customer_success', {customerId})
 			Router.push({pathname: '/form', query: {customerId}})
 		}
 	}
@@ -49,6 +59,7 @@ export default function Home() {
 	const handleScan = data => {
 		if (data) {
 			setCustomerId(data)
+			mixpanel.track('scan_success', {data})
 			setIsScannerActive(false)
 		}
 	}
@@ -65,6 +76,7 @@ export default function Home() {
 		if (!isScannerActive) {
 			return null
 		}
+		mixpanel.track('scan_start')
 		return <ClientQrScanner handleScan={handleScan} />
 	}
 
@@ -97,9 +109,9 @@ export default function Home() {
 						/>
 						<button
 							className="ml-1 px-2 bg-gray-800 text-white rounded-md w-12"
-							onClick={() => setIsScannerActive(true)}
+							onClick={() => setIsScannerActive(!isScannerActive)}
 						>
-							scan
+							{isScannerActive ? 'x' : 'scan'}
 						</button>
 					</div>
 					{renderInvalidCustomerIdError()}

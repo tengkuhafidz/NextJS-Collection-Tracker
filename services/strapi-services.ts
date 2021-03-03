@@ -1,7 +1,7 @@
 import axios from 'axios'
-import getConfig from 'next/config'
 import {parseCookies} from 'nookies'
 import {LoginRequest, RecordCollectionRequest} from '../typings'
+import getConfig from 'next/config'
 
 const {publicRuntimeConfig} = getConfig()
 

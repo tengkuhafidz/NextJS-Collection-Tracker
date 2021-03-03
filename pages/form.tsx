@@ -7,8 +7,14 @@ import {ErrorBox} from '../components/error-box'
 import Layout from '../components/layout'
 import * as StrapiService from '../services/strapi-services'
 import BounceLoader from 'react-spinners/BounceLoader'
+import mixpanel from 'mixpanel-browser'
+import getConfig from 'next/config'
+
+const {publicRuntimeConfig} = getConfig()
 
 export default function Form() {
+	mixpanel.init(publicRuntimeConfig.MixpanelToken)
+
 	const customerId = Router.query.customerId as string
 	const [customer, setCustomer] = useState(null)
 	const [collectionCountToday, setCollectionCountToday] = useState(0)
@@ -38,6 +44,13 @@ export default function Form() {
 			setCollectionCountToday(collectionCount)
 			setMaxCollectionCountToday(maxCollectionCount)
 			setIsLoadingPage(false)
+
+			mixpanel.track('identify_customer', {
+				customerId: customer.id,
+				customerName: customer.name,
+				customerKnownIllness: customer.known_illness,
+				customerCollectionCount: `${collectionCount} / ${maxCollectionCount}`,
+			})
 		}
 		fetchAndSetData()
 	}, [])
@@ -84,20 +97,33 @@ export default function Form() {
 		setIsLoadingSubmission(true)
 		try {
 			await StrapiService.recordCollection(id, quantity)
+			mixpanel.track('record_collection_success', {
+				customerId: id,
+				unitQuantity: quantity,
+			})
 			Router.push('/success')
 		} catch (e) {
 			console.log('ERROR recordCollection for', id, e)
+			mixpanel.track('record_collection_error', {
+				customerId: id,
+				unitQuantity: quantity,
+			})
 			setIsLoadingSubmission(false)
 		}
 	}
 
 	const handleTakePhoto = async base64Image => {
 		setIsLoadingImage(true)
-		const imageFile = await fetch(base64Image).then(res => res.blob())
-		const imageData = await StrapiService.uploadImage(imageFile, name)
-		await StrapiService.updateProfileImage(id, imageData.id)
+		try {
+			const imageFile = await fetch(base64Image).then(res => res.blob())
+			const imageData = await StrapiService.uploadImage(imageFile, name)
 
-		setPhoto(imageData.url)
+			await StrapiService.updateProfileImage(id, imageData.id)
+			setPhoto(imageData.url)
+			mixpanel.track('photo_success', {customerId: id})
+		} catch (e) {
+			mixpanel.track('photo_error', {customerId: id})
+		}
 		setIsLoadingImage(false)
 		setIsCameraActive(false)
 	}
@@ -112,6 +138,7 @@ export default function Form() {
 		}
 
 		if (isCameraActive) {
+			mixpanel.track('photo_start')
 			return (
 				<div>
 					<Camera

@@ -1,5 +1,6 @@
 import Router from 'next/router'
-import { parseCookies } from 'nookies'
+import {parseCookies} from 'nookies'
+import mixpanel from 'mixpanel-browser'
 
 export const redirectUser = (ctx, location) => {
 	if (ctx.req) {
@@ -10,14 +11,16 @@ export const redirectUser = (ctx, location) => {
 	}
 }
 
-export const redirectBasedOnAuthStatus = (ctx) => {
-  const { token } = parseCookies(ctx)
-  
-  if(!token && ctx.pathname !== '/login') {
-    redirectUser(ctx, '/login')
-  }
+export const redirectBasedOnAuthStatus = ctx => {
+	const {token, userId} = parseCookies(ctx)
 
-  if(!!token && ctx.pathname === '/login') {
-    redirectUser(ctx, '/')
-  }
+	mixpanel.identify(userId)
+
+	if (!token && ctx.pathname !== '/login') {
+		redirectUser(ctx, '/login')
+	}
+
+	if (!!token && ctx.pathname === '/login') {
+		redirectUser(ctx, '/')
+	}
 }
