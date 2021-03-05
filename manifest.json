@@ -1,0 +1,13 @@
+{
+	"name": "NAFAS Collection Tracker",
+	"short_name": "NAFAS",
+	"lang": "en-US",
+	"start_url": "/",
+	"display": "standalone",
+	"icons": [
+		{
+			"src": "/nafas-appicon.png",
+			"sizes": "512x512"
+		}
+	]
+}
