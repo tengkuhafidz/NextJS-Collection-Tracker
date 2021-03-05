@@ -2,7 +2,7 @@
 	"name": "NAFAS Collection Tracker",
 	"short_name": "NAFAS",
 	"lang": "en-US",
-	"start_url": "/",
+	"start_url": "https://collection-tracker.vercel.app",
 	"display": "standalone",
 	"icons": [
 		{
