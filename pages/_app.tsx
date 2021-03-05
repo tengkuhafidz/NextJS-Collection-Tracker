@@ -3,11 +3,19 @@ import {redirectBasedOnAuthStatus} from '../utils/redirect'
 import '../styles/globals.css'
 import mixpanel from 'mixpanel-browser'
 import getConfig from 'next/config'
+import Head from 'next/head'
 
 const {publicRuntimeConfig} = getConfig()
 
 function MyApp({Component, pageProps}: AppProps) {
-	return <Component {...pageProps} />
+	return (
+		<>
+			<Head>
+				<link rel="manifest" href="/manifest.json" />
+			</Head>
+			<Component {...pageProps} />
+		</>
+	)
 }
 
 MyApp.getInitialProps = async ({Component, ctx}) => {

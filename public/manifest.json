@@ -2,11 +2,15 @@
 	"name": "NAFAS Collection Tracker",
 	"short_name": "NAFAS",
 	"lang": "en-US",
-	"start_url": "https://collection-tracker.vercel.app",
+	"scope": "/",
+	"start_url": "/",
 	"display": "standalone",
+	"theme_color": "#000000",
+	"background_color": "#ffffff",
+	"orientation": "portrait",
 	"icons": [
 		{
-			"src": "https://collection-tracker.vercel.app/nafas-appicon.png",
+			"src": "/nafas-appicon.png",
 			"sizes": "512x512"
 		}
 	]
