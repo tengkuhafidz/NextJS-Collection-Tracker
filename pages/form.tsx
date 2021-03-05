@@ -15,7 +15,6 @@ const {publicRuntimeConfig} = getConfig()
 export default function Form() {
 	mixpanel.init(publicRuntimeConfig.MixpanelToken)
 
-	const customerId = Router.query.customerId as string
 	const [customer, setCustomer] = useState(null)
 	const [collectionCountToday, setCollectionCountToday] = useState(0)
 	const [maxCollectionCountToday, setMaxCollectionCountToday] = useState(0)
@@ -29,6 +28,7 @@ export default function Form() {
 	useEffect(() => {
 		async function fetchAndSetData() {
 			setIsLoadingPage(true)
+			const customerId = Router.query.customerId as string
 			const customer = await StrapiService.getCustomer(customerId)
 			const collectionCount = await StrapiService.getCustomerCollectionCountToday(
 				customerId,
@@ -245,4 +245,10 @@ export default function Form() {
 			</main>
 		</Layout>
 	)
+}
+
+export async function getServerSideProps(context) {
+	return {
+		props: {}, // will be passed to the page component as props
+	}
 }
