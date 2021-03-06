@@ -2,6 +2,7 @@ import axios from 'axios'
 import {parseCookies} from 'nookies'
 import {LoginRequest, RecordCollectionRequest} from '../typings'
 import getConfig from 'next/config'
+import moment from 'moment'
 
 const {publicRuntimeConfig} = getConfig()
 
@@ -23,9 +24,16 @@ export const getCustomer = async (customerId: string) => {
 	return data[0]
 }
 
+export const getAllCustomers = async () => {
+	const {data} = await apiCall.get(`/customers`, getApiConfig())
+
+	return data
+}
+
 export const getCustomerCollectionCountToday = async (customerId: string) => {
+	const todayDate = moment().format('YYYY-MM-DD')
 	const {data} = await apiCall.get(
-		`/collections/count?customer.id=${customerId}&created_at_gte=${dateToday()}`,
+		`/collections/count?customer.id=${customerId}&created_at_gte=${todayDate}`,
 		getApiConfig(),
 	)
 	return data
@@ -76,19 +84,6 @@ export const recordCollection = async (
 	}
 
 	await apiCall.post('/collections', requestBody, getApiConfig())
-}
-
-export const dateToday = () => {
-	const dt = new Date()
-
-	// doing this computational gymnastics to achieve this format: 2021-01-01
-	return (
-		dt.getFullYear() +
-		'-' +
-		('0' + (dt.getMonth() + 1)).slice(-2) +
-		'-' +
-		('0' + dt.getDate()).slice(-2)
-	)
 }
 
 const getApiConfig = () => {

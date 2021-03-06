@@ -9,3 +9,11 @@ export interface RecordCollectionRequest {
 	users_permissions_user: string
 	lokasi: string
 }
+
+export interface CustomerActivenessMapping {
+	id: number
+	name: string
+	lastCollectedAt: string
+	totalCollections: number
+	totalCollectionsInTwoWeeks: number
+}
